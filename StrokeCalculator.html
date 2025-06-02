@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Calculadora de Riesgo de ACV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Now', 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
-
         .sidebar {
             height: 100%;
             width: 60px;
@@ -28,14 +28,13 @@
             box-sizing: border-box;
             z-index: 1001;
         }
-
         .sidebar button {
-            background-color: #0039a6; /* Un solo tono de azul */
+            background-color: #0039a6;
             color: white;
             border: none;
             border-radius: 5px;
             padding: 10px 15px;
-            font-size: 18px; /* Aumentar tamaño de letra */
+            font-size: 18px;
             margin: 5px 10px;
             cursor: pointer;
             opacity: 0;
@@ -44,22 +43,18 @@
             width: calc(100% - 20px);
             box-sizing: border-box;
             white-space: nowrap;
-            text-align: center; /* Centrar texto */
+            text-align: center;
         }
-
         .sidebar.expanded button {
             opacity: 1;
             margin-left: 0;
         }
-
         .sidebar button:hover {
             background-color: #0055cc;
         }
-
         .sidebar.expanded {
             width: 250px;
         }
-
         .toggle-btn {
             position: fixed;
             top: 10px;
@@ -73,7 +68,6 @@
             font-size: 20px;
             z-index: 1002;
         }
-
         .overlay {
             position: fixed;
             top: 0;
@@ -86,56 +80,50 @@
             transition: opacity 0.3s;
             z-index: 1000;
         }
-
         .overlay.active {
             opacity: 1;
             visibility: visible;
         }
-
         .content {
             margin-right: 60px;
             padding: 20px;
             display: flex;
-            justify-content: center; /* Centrar contenido */
+            justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Centrar vertical */
+            min-height: 100vh;
             box-sizing: border-box;
         }
-
         .content-section {
             display: none;
             background-color: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             max-width: 400px;
-            width: 100%;
-            text-align: center; /* Centrar texto */
+            width: 90%;
+            text-align: center;
         }
-
         .content-section.active {
             display: block;
         }
-
         h2 {
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 20px;
             color: #333;
         }
-
         label {
             display: block;
             margin-top: 10px;
-            font-size: 18px;
+            font-size: 16px;
             color: #555;
-            text-align: center;
+            text-align: left;
+            padding-left: 10%;
         }
-
         input, select {
-            width: 80%; /* Más pequeñas */
-            padding: 6px;
+            width: 80%;
+            padding: 8px;
             margin-top: 5px;
-            border-radius: 5px;
+            border-radius: 8px;
             border: 1px solid #ccc;
             margin-bottom: 10px;
             font-size: 16px;
@@ -143,86 +131,215 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         button.calc-btn {
-            background-color: #0039a6; /* Mismo azul */
+            background-color: #0039a6;
             color: white;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             width: 80%;
             cursor: pointer;
             font-size: 18px;
             margin-top: 15px;
+            transition: background-color 0.3s;
         }
-
         button.calc-btn:hover {
             background-color: #0055cc;
         }
-
         #result {
             font-size: 20px;
             color: #333;
             margin-top: 15px;
         }
+        .logo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 150px;
+            height: auto;
+            z-index: 1003;
+        }
+        #welcomeMsg {
+            display: none; /* Oculto pero presente */
+            color: white;
+            margin-left: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #patientsList {
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .patient-entry {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .patient-entry button {
+            margin-left: 10px;
+            background-color: #0039a6;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .patient-entry button:hover {
+            background-color: #0055cc;
+        }
+        @media (max-width: 600px) {
+            .content-section {
+                padding: 20px;
+            }
+            input, select, button.calc-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
+<img src="tec.png" alt="Logo TEC" class="logo">
 <div id="myOverlay" class="overlay" onclick="toggleSidebar()"></div>
-
 <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 
 <div id="mySidebar" class="sidebar">
+    <p id="welcomeMsg">Bienvenid@</p> <!-- Dentro del menú y oculto -->
     <button onclick="showContent('calculadora')">Calculadora</button>
     <button onclick="showContent('metodologia')">Metodología</button>
     <button onclick="showContent('info')">Información</button>
-    <button onclick="showContent('contacto')">Contacto</button>
+    <button onclick="showContent('pacientes')">Pacientes</button>
+    <button onclick="showLogin()">Iniciar sesión</button>
+    <button onclick="showRegister()">Crear cuenta</button>
+</div>
+
+<!-- Formularios de inicio de sesión y registro -->
+<div id="loginForm" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); z-index:1004;">
+    <h3>Iniciar Sesión</h3>
+    <input type="text" id="loginUser" placeholder="Usuario"><br>
+    <input type="password" id="loginPass" placeholder="Contraseña"><br>
+    <button onclick="login()">Entrar</button>
+    <button onclick="closeLogin()">Cerrar</button>
+</div>
+
+<div id="registerForm" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.2); z-index:1004;">
+    <h3>Crear Cuenta</h3>
+    <input type="text" id="registerUser" placeholder="Usuario"><br>
+    <input type="password" id="registerPass" placeholder="Contraseña"><br>
+    <button onclick="register()">Registrar</button>
+    <button onclick="closeRegister()">Cerrar</button>
 </div>
 
 <div class="content">
     <div id="content-calculadora" class="content-section active">
         <h2>Calculadora de Riesgo de ACV</h2>
-        <label>Edad:</label>
-        <input type="number" id="age">
-        <label>Hipertensión:</label>
-        <select id="hypertension"><option value="0">No</option><option value="1">Sí</option></select>
-        <label>Enfermedad Cardíaca:</label>
-        <select id="heart_disease"><option value="0">No</option><option value="1">Sí</option></select>
-        <label>Residencia:</label>
-        <select id="residence"><option value="0">Rural</option><option value="1">Urbano</option></select>
-        <label>Glucosa promedio:</label>
-        <input type="number" id="glucose">
-        <label>IMC:</label>
-        <input type="number" id="bmi">
-        <label>Género:</label>
-        <select id="gender"><option value="0">Masculino</option><option value="1">Femenino</option></select>
-        <label>Estado de Tabaquismo:</label>
-        <select id="smoking"><option value="0">Nunca fumó</option><option value="1">Fumó anteriormente</option><option value="2">Fuma actualmente</option></select>
+        <label>Nombre del paciente:</label><input type="text" id="patientName">
+        <label>Edad:</label><input type="number" id="age">
+        <label>Hipertensión:</label><select id="hypertension"><option value="0">No</option><option value="1">Sí</option></select>
+        <label>Enfermedad Cardíaca:</label><select id="heart_disease"><option value="0">No</option><option value="1">Sí</option></select>
+        <label>Residencia:</label><select id="residence"><option value="0">Rural</option><option value="1">Urbano</option></select>
+        <label>Glucosa promedio:</label><input type="number" id="glucose">
+        <label>IMC:</label><input type="number" id="bmi">
+        <label>Género:</label><select id="gender"><option value="0">Masculino</option><option value="1">Femenino</option></select>
+        <label>Estado de Tabaquismo:</label><select id="smoking"><option value="0">Nunca fumó</option><option value="1">Fumó anteriormente</option><option value="2">Fuma actualmente</option></select>
         <button class="calc-btn" onclick="calculateRisk()">Calcular Riesgo</button>
         <p id="result"></p>
     </div>
-    <div id="content-metodologia" class="content-section">
-        <h2>Metodología</h2>
-        <p>Explicación detallada de cómo se calcula el riesgo.</p>
-    </div>
+
     <div id="content-info" class="content-section">
-        <h2>Información para pacientes</h2>
-        <p>Información relevante para los pacientes.</p>
+    <h2>Información para Pacientes</h2>
+    <p>A continuación, puedes visualizar el documento informativo sobre enfermedad cerebrovascular:</p>
+    
+    <!-- Incrustar PDF -->
+    <iframe src="enfermedad_cerebrovascular.pdf" width="100%" height="600px" style="border: 1px solid #ccc;"></iframe>
+    
+    <!-- Enlace para descargar -->
+    <p><a href="enfermedad_cerebrovascular.pdf" download style="color:#0039a6; text-decoration:none; font-weight:bold;">Descargar PDF</a></p>
+</div>
+    <div id="content-metodologia" class="content-section">
+    <h2>Metodología</h2>
+    <h3>Modelo Estadístico</h3>
+    <p>
+        Para la construcción de una calculadora de riesgo de infarto cerebral a corto plazo, se empleó un modelo de regresión logística (Logit Model), dado que la variable dependiente (presencia o ausencia de infarto cerebral) es binaria (0 = no infarto, 1 = infarto). Este modelo es ampliamente utilizado en predicción de riesgo clínico debido a su capacidad para estimar probabilidades entre 0 y 1, así como para identificar la influencia relativa de cada variable predictora.
+    </p>
+    <h3>Fórmula</h3>
+    <p style="text-align:center; font-size: 15px;">
+        <em>P(Infarto) = 1 / [1 + e<sup>-(β₀+β₁X₁+β₂X₂+…+βnXn)</sup>]</em>
+    </p>
+    <h3>Fuente de Datos</h3>
+    <p>
+        El conjunto de datos utilizado fue obtenido del repositorio Mendeley Data (Liu et al., 2019), bajo la referencia:<br>
+        <strong>Título:</strong> "A hybrid machine learning approach to cerebral stroke prediction based on imbalanced medical-datasets"<br>
+        <strong>DOI:</strong> 10.17632/x8ygrw87jw.1<br>
+        <strong>Descripción:</strong> Contiene registros médicos anonimizados con variables clínicas y demográficas asociadas a eventos de infarto cerebral.
+    </p>
+    <h3>Procesamiento de Datos</h3>
+    <ul>
+        <li><strong>Importación y Limpieza:</strong> Los datos fueron importados a RStudio (versión X.X.X) usando funciones como <code>read.csv()</code> o paquetes especializados como <code>readr</code>. Se eliminaron valores faltantes, se corrigieron outliers y se estandarizaron formatos.</li>
+        <li><strong>Transformación de Variables:</strong> Variables categóricas (género, hipertensión, etc.) se codificaron en formato numérico (dummy), y variables continuas (edad, colesterol) se escalaron.</li>
+        <li><strong>Análisis de Regresión Logística:</strong> Ajuste del modelo con <code>glm()</code> de R (familia binomial), evaluación de p-valores (&lt; 0.05) y contribución mediante log-odds. Selección de predictores clave (edad, hipertensión, diabetes) según peso estadístico y relevancia clínica.</li>
+    </ul>
+    <h3>Desarrollo de la Calculadora de Riesgo</h3>
+    <p>
+        Se desarrolló una aplicación web HTML interactiva que implementa los coeficientes del modelo Logit, con campos de entrada para variables clínicas y cálculo en tiempo real:
+    </p>
+    <p style="text-align:center; font-size: 20px;">
+        <em>P(Infarto) = 1 / [1 + e<sup>-(β₀+β₁X₁+β₂X₂+…+βnXn)</sup>]</em>
+    </p>
+    <p>
+        Se muestra la probabilidad estimada como porcentaje y categoría (bajo, moderado, alto riesgo).
+    </p>
+    <h3>Herramientas Utilizadas</h3>
+    <ul>
+        <li><strong>Lenguajes/Plataformas:</strong> R (análisis estadístico), HTML/JavaScript (interfaz web)</li>
+        <li><strong>Paquetes de R:</strong> tidyverse (limpieza), dplyr (manipulación de datos)</li>
+    </ul>
+    <h3>Objetivos</h3>
+    <p>
+        Diseñar una calculadora de riesgo de infarto cerebral mediante un modelo Logit, usando un dataset real (Liu et al., 2019), seleccionando predictores clave y traduciendo resultados a una herramienta web interactiva para uso clínico preventivo.
+    </p>
+    <h3>Estrategias</h3>
+    <ol>
+        <li><strong>Análisis de datos:</strong> Identificación de factores asociados al infarto cerebral (edad, hipertensión, diabetes).</li>
+        <li><strong>Modelado predictivo:</strong> Creación del algoritmo de cálculo basado en regresión logística.</li>
+        <li><strong>Implementación tecnológica:</strong> Desarrollo de una interfaz web intuitiva para usuarios finales.</li>
+    </ol>
+</div>
+    <div id="content-info" class="content-section">
+        <h2>Información para pacientes</h2><p>Contenido relevante.</p>
     </div>
     <div id="content-contacto" class="content-section">
-        <h2>Contacto</h2>
-        <p>Información de contacto.</p>
+        <h2>Contacto</h2><p>Información de contacto.</p>
+    </div>
+    <div id="content-pacientes" class="content-section">
+        <h2>Pacientes</h2>
+        <div id="patientsList"></div>
+        <button onclick="loadPatients()">Cargar lista</button>
     </div>
 </div>
 
 <script>
+// Aquí insertamos el código JS final con todas las mejoras:
     function toggleSidebar() {
-        const sidebar = document.getElementById("mySidebar");
-        const overlay = document.getElementById("myOverlay");
-        sidebar.classList.toggle("expanded");
-        overlay.classList.toggle("active");
+    const sidebar = document.getElementById("mySidebar");
+    const overlay = document.getElementById("myOverlay");
+    const welcome = document.getElementById("welcomeMsg");
+
+    sidebar.classList.toggle("expanded");
+    overlay.classList.toggle("active");
+
+    const currentUser = localStorage.getItem("currentUser");
+    if (sidebar.classList.contains("expanded") && currentUser) {
+        welcome.textContent = "Bienvenido/a " + currentUser + "!";
+        welcome.style.display = "block";
+    } else {
+        welcome.style.display = "none";
     }
+}
 
     function showContent(section) {
         const sections = document.querySelectorAll('.content-section');
@@ -230,7 +347,43 @@
         document.getElementById('content-' + section).classList.add('active');
     }
 
+    function showLogin() { document.getElementById("loginForm").style.display = "block"; }
+    function closeLogin() { document.getElementById("loginForm").style.display = "none"; }
+    function showRegister() { document.getElementById("registerForm").style.display = "block"; }
+    function closeRegister() { document.getElementById("registerForm").style.display = "none"; }
+
+    function register() {
+        const user = document.getElementById("registerUser").value;
+        const pass = document.getElementById("registerPass").value;
+        if (user && pass) {
+            let users = JSON.parse(localStorage.getItem("users")) || {};
+            if (users[user]) { alert("Usuario ya existe"); return; }
+            users[user] = pass;
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("Cuenta creada.");
+            closeRegister();
+        } else { alert("Completa usuario y contraseña."); }
+    }
+
+    function login() {
+        const user = document.getElementById("loginUser").value;
+        const pass = document.getElementById("loginPass").value;
+        const users = JSON.parse(localStorage.getItem("users")) || {};
+        if (users[user] && users[user] === pass) {
+            localStorage.setItem("currentUser", user);
+            document.getElementById("welcomeMsg").innerText = "Bienvenid@ " + user;
+            document.getElementById("welcomeMsg").style.display = "block";
+            closeLogin();
+        } else { alert("Credenciales incorrectas."); }
+    }
+
     function calculateRisk() {
+        const currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) {
+            alert("Por favor inicia sesión para guardar datos.");
+            return;
+        }
+
         const intercept = Math.log(0.0002950307);
         const beta_age = Math.log(1.0727269331);
         const beta_hypertension = Math.log(1.7626001104);
@@ -242,6 +395,7 @@
         const beta_smoking_formerly = Math.log(1.0662527779);
         const beta_smoking_smokes = Math.log(1.4800372288);
 
+        const name = document.getElementById("patientName").value || "Paciente sin nombre";
         const age = parseFloat(document.getElementById("age").value) || 0;
         const hypertension = parseInt(document.getElementById("hypertension").value);
         const heart_disease = parseInt(document.getElementById("heart_disease").value);
@@ -250,26 +404,79 @@
         const bmi = parseFloat(document.getElementById("bmi").value) || 0;
         const gender = document.getElementById("gender").value;
         const smoking = document.getElementById("smoking").value;
-
         const gender_female = gender == "1" ? 1 : 0;
         const smoking_formerly = smoking == "1" ? 1 : 0;
         const smoking_smokes = smoking == "2" ? 1 : 0;
 
-        const logit = intercept +
-                      beta_age * age +
-                      beta_hypertension * hypertension +
-                      beta_heart * heart_disease +
-                      beta_residence * residence +
-                      beta_glucose * glucose +
-                      beta_bmi * bmi +
-                      beta_female * gender_female +
-                      beta_smoking_formerly * smoking_formerly +
-                      beta_smoking_smokes * smoking_smokes;
-
+        const logit = intercept + beta_age * age + beta_hypertension * hypertension + beta_heart * heart_disease + beta_residence * residence + beta_glucose * glucose + beta_bmi * bmi + beta_female * gender_female + beta_smoking_formerly * smoking_formerly + beta_smoking_smokes * smoking_smokes;
         const probability = Math.exp(logit) / (1 + Math.exp(logit));
 
-        document.getElementById("result").innerText =
-            "Riesgo estimado de ACV: " + (probability * 100).toFixed(2) + "%";
+        const record = {
+            paciente: name,
+            riesgo: (probability * 100).toFixed(2) + "%",
+            edad: age,
+            hipertension: hypertension ? "Sí" : "No",
+            enfermedad_cardiaca: heart_disease ? "Sí" : "No",
+            residencia: residence == "1" ? "Urbano" : "Rural",
+            glucosa: glucose,
+            imc: bmi,
+            genero: gender_female ? "Femenino" : "Masculino",
+            tabaquismo: smoking == "0" ? "Nunca" : (smoking == "1" ? "Fumó anteriormente" : "Fuma actualmente")
+        };
+
+        const key = `patients_${currentUser}`;
+        const patients = JSON.parse(localStorage.getItem(key)) || [];
+        patients.push(record);
+        localStorage.setItem(key, JSON.stringify(patients));
+
+        document.getElementById("result").innerText = "Riesgo estimado: " + record.riesgo;
+    }
+
+    function loadPatients() {
+        const currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) {
+            alert("Por favor inicia sesión para ver pacientes.");
+            return;
+        }
+
+        const key = `patients_${currentUser}`;
+        const patients = JSON.parse(localStorage.getItem(key)) || [];
+        const list = document.getElementById("patientsList");
+        list.innerHTML = patients.map((p, i) => `
+            <div class="patient-entry">
+                <strong>${p.paciente}</strong>: Riesgo ${p.riesgo}, Edad ${p.edad}
+                <button onclick="deletePatient(${i})">Eliminar</button>
+                <button onclick="showDetails(${i})">Detalles</button>
+            </div>
+        `).join('');
+    }
+
+    function deletePatient(index) {
+        const currentUser = localStorage.getItem("currentUser");
+        const key = `patients_${currentUser}`;
+        let patients = JSON.parse(localStorage.getItem(key)) || [];
+        patients.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(patients));
+        loadPatients();
+    }
+
+    function showDetails(index) {
+        const currentUser = localStorage.getItem("currentUser");
+        const key = `patients_${currentUser}`;
+        const patients = JSON.parse(localStorage.getItem(key)) || [];
+        const p = patients[index];
+        alert(
+            `Detalles de ${p.paciente}:\n` +
+            `Edad: ${p.edad}\n` +
+            `Riesgo: ${p.riesgo}\n` +
+            `Hipertensión: ${p.hipertension}\n` +
+            `Enfermedad Cardíaca: ${p.enfermedad_cardiaca}\n` +
+            `Residencia: ${p.residencia}\n` +
+            `Glucosa promedio: ${p.glucosa}\n` +
+            `IMC: ${p.imc}\n` +
+            `Género: ${p.genero}\n` +
+            `Estado de Tabaquismo: ${p.tabaquismo}`
+        );
     }
 </script>
 
