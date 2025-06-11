@@ -239,13 +239,12 @@
         <h2>Calculadora de Riesgo de ACV</h2>
         <label>Nombre del paciente:</label><input type="text" id="patientName">
         <label>Edad:</label><input type="number" id="age">
-        <label>Hipertensión:</label><select id="hypertension"><option value="0">No</option><option value="1">Sí</option></select>
+        <label>Hipertensión Arterial:</label><select id="hypertension"><option value="0">No</option><option value="1">Sí</option></select>
         <label>Enfermedad Cardíaca:</label><select id="heart_disease"><option value="0">No</option><option value="1">Sí</option></select>
-        <label>Residencia:</label><select id="residence"><option value="0">Rural</option><option value="1">Urbano</option></select>
-        <label>Glucosa promedio:</label><input type="number" id="glucose">
-        <label>IMC:</label><input type="number" id="bmi">
-        <label>Género:</label><select id="gender"><option value="0">Masculino</option><option value="1">Femenino</option></select>
-        <label>Estado de Tabaquismo:</label><select id="smoking"><option value="0">Nunca fumó</option><option value="1">Fumó anteriormente</option><option value="2">Fuma actualmente</option></select>
+        <label>Última medición de glucosa en ayunas:</label><input type="number" id="glucose">
+        <label>Índice de Masa Corporal:</label><input type="number" id="bmi">
+        <label>Sexo Biológico:</label><select id="gender"><option value="0">Masculino</option><option value="1">Femenino</option></select>
+        <label>Tabaquismo:</label><select id="smoking"><option value="0">Nunca fumó</option><option value="1">Fumó anteriormente</option><option value="2">Fuma actualmente</option></select>
         <button class="calc-btn" onclick="calculateRisk()">Calcular Riesgo</button>
         <p id="result"></p>
     </div>
@@ -254,7 +253,6 @@
     <h2>Información para Pacientes</h2>
     <p>A continuación, puedes visualizar el documento informativo sobre enfermedad cerebrovascular:</p>
     
-    <!-- Incrustar PDF -->
     <iframe src="enfermedad_cerebrovascular.pdf" width="100%" height="600px" style="border: 1px solid #ccc;"></iframe>
     
     <!-- Enlace para descargar -->
@@ -388,7 +386,6 @@
         const beta_age = Math.log(1.0727269331);
         const beta_hypertension = Math.log(1.7626001104);
         const beta_heart = Math.log(1.5319967451);
-        const beta_residence = Math.log(1.0007821609);
         const beta_glucose = Math.log(1.0046736186);
         const beta_bmi = Math.log(1.0066413829);
         const beta_female = Math.log(1.0773218746);
@@ -399,7 +396,6 @@
         const age = parseFloat(document.getElementById("age").value) || 0;
         const hypertension = parseInt(document.getElementById("hypertension").value);
         const heart_disease = parseInt(document.getElementById("heart_disease").value);
-        const residence = parseInt(document.getElementById("residence").value);
         const glucose = parseFloat(document.getElementById("glucose").value) || 0;
         const bmi = parseFloat(document.getElementById("bmi").value) || 0;
         const gender = document.getElementById("gender").value;
@@ -408,20 +404,21 @@
         const smoking_formerly = smoking == "1" ? 1 : 0;
         const smoking_smokes = smoking == "2" ? 1 : 0;
 
-        const logit = intercept + beta_age * age + beta_hypertension * hypertension + beta_heart * heart_disease + beta_residence * residence + beta_glucose * glucose + beta_bmi * bmi + beta_female * gender_female + beta_smoking_formerly * smoking_formerly + beta_smoking_smokes * smoking_smokes;
+        const logit = intercept + beta_age * age + beta_hypertension * hypertension + beta_heart * heart_disease + beta_glucose * glucose + beta_bmi * bmi + beta_female * gender_female + beta_smoking_formerly * smoking_formerly + beta_smoking_smokes * smoking_smokes;
         const probability = Math.exp(logit) / (1 + Math.exp(logit));
 
+        const fechaRegistro = new Date().toLocaleString();  // Nueva línea: Fecha y hora
         const record = {
             paciente: name,
             riesgo: (probability * 100).toFixed(2) + "%",
             edad: age,
             hipertension: hypertension ? "Sí" : "No",
             enfermedad_cardiaca: heart_disease ? "Sí" : "No",
-            residencia: residence == "1" ? "Urbano" : "Rural",
             glucosa: glucose,
             imc: bmi,
             genero: gender_female ? "Femenino" : "Masculino",
-            tabaquismo: smoking == "0" ? "Nunca" : (smoking == "1" ? "Fumó anteriormente" : "Fuma actualmente")
+            tabaquismo: smoking == "0" ? "Nunca" : (smoking == "1" ? "Fumó anteriormente" : "Fuma actualmente"),
+            fecha: fechaRegistro  // Nueva propiedad
         };
 
         const key = `patients_${currentUser}`;
@@ -444,9 +441,9 @@
         const list = document.getElementById("patientsList");
         list.innerHTML = patients.map((p, i) => `
             <div class="patient-entry">
-                <strong>${p.paciente}</strong>: Riesgo ${p.riesgo}, Edad ${p.edad}
+                <strong>${p.paciente}</strong>: Riesgo ${p.riesgo}, Edad ${p.edad}, Registrado el ${p.fecha}
                 <button onclick="deletePatient(${i})">Eliminar</button>
-                <button onclick="showDetails(${i})">Detalles</button>
+             <button onclick="showDetails(${i})">Detalles</button>
             </div>
         `).join('');
     }
@@ -469,13 +466,13 @@
             `Detalles de ${p.paciente}:\n` +
             `Edad: ${p.edad}\n` +
             `Riesgo: ${p.riesgo}\n` +
-            `Hipertensión: ${p.hipertension}\n` +
+            `Hipertensión Arterial: ${p.hipertension}\n` +
             `Enfermedad Cardíaca: ${p.enfermedad_cardiaca}\n` +
-            `Residencia: ${p.residencia}\n` +
-            `Glucosa promedio: ${p.glucosa}\n` +
-            `IMC: ${p.imc}\n` +
-            `Género: ${p.genero}\n` +
-            `Estado de Tabaquismo: ${p.tabaquismo}`
+            `Última medición de glucosa en ayunas: ${p.glucosa}\n` +
+            `Índice de Masa Corporal: ${p.imc}\n` +
+            `Sexo Biológico: ${p.genero}\n` +
+            `Tabaquismo: ${p.tabaquismo}\n` +
+            `Fecha de Registro: ${p.fecha}`
         );
     }
 </script>
